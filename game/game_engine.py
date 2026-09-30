@@ -43,9 +43,8 @@ class GameEngine:
     def start_next_round(self):
         new_color = random.randint(0, 3)
 
-        # BUG SYMPTOM:
-        # Sequence duplicates previous steps and grows exponentially each round.
-        self.sequence += self.sequence + [new_color]
+        # FIXED: Append only the new single color to the sequence
+        self.sequence.append(new_color)
         
         self.player_input.clear()
         self.state = "WATCH"
