@@ -1,4 +1,5 @@
 import random
+import array
 import pygame
 from game.color_button import ColorButton
 
@@ -148,3 +149,19 @@ class GameEngine:
 
             restart_surf = self.font_medium.render("Press [R] to Play Again", True, (200, 200, 200))
             screen.blit(restart_surf, (self.width // 2 - restart_surf.get_width() // 2, self.height // 2 + 50))
+            
+    def create_tone(self, frequency, duration=1.0):
+        """Synthesizes a simple square wave buffer for a given frequency."""
+        sample_rate = 44100
+        amplitude = 8000
+        period = int(sample_rate / frequency)
+        frames = int(sample_rate * duration)
+        
+        buffer = array.array('h') # Signed 16-bit integer array
+        for i in range(frames):
+            # Square wave: high for first half of period, low for second half
+            val = amplitude if (i % period) < (period // 2) else -amplitude
+            buffer.append(val) # Left channel
+            buffer.append(val) # Right channel
+            
+        return pygame.mixer.Sound(buffer=buffer)
