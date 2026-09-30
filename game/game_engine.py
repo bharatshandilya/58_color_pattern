@@ -13,14 +13,12 @@ class GameEngine:
         gap = 24
         start_x = width // 2 - pad_size - (gap // 2)
         start_y = 150
-        self.turn_time_limit = 0
-        self.turn_start_time = 0
 
         self.buttons = [
-            ColorButton(0, pygame.Rect(start_x, start_y, pad_size, pad_size), (110, 20, 20), (255, 50, 50)),                      # Red
-            ColorButton(1, pygame.Rect(start_x + pad_size + gap, start_y, pad_size, pad_size), (15, 60, 150), (40, 170, 255)),   # Blue
-            ColorButton(2, pygame.Rect(start_x, start_y + pad_size + gap, pad_size, pad_size), (15, 100, 30), (50, 255, 90)),    # Green
-            ColorButton(3, pygame.Rect(start_x + pad_size + gap, start_y + pad_size + gap, pad_size, pad_size), (140, 110, 10), (255, 235, 40)), # Yellow
+            ColorButton(0, pygame.Rect(start_x, start_y, pad_size, pad_size), (110, 20, 20), (255, 50, 50)),
+            ColorButton(1, pygame.Rect(start_x + pad_size + gap, start_y, pad_size, pad_size), (15, 60, 150), (40, 170, 255)),
+            ColorButton(2, pygame.Rect(start_x, start_y + pad_size + gap, pad_size, pad_size), (15, 100, 30), (50, 255, 90)),
+            ColorButton(3, pygame.Rect(start_x + pad_size + gap, start_y + pad_size + gap, pad_size, pad_size), (140, 110, 10), (255, 235, 40)),
         ]
 
         self.sequence = []
@@ -41,12 +39,28 @@ class GameEngine:
         self.font_title = pygame.font.SysFont(None, 40)
         self.font_medium = pygame.font.SysFont(None, 28)
 
+        # TASK 4: Initialize timer variables
+        self.turn_time_limit = 0
+        self.turn_start_time = 0
+
+        # TASK 3: Initialize Pygame mixer and generated tones BEFORE starting the round
+        pygame.mixer.init(44100, -16, 2, 512)
+        self.tones = {
+            0: self.create_tone(261), # Red
+            1: self.create_tone(329), # Blue
+            2: self.create_tone(392), # Green
+            3: self.create_tone(523)  # Yellow
+        }
+
         self.start_next_round()
 
     def start_next_round(self):
         new_color = random.randint(0, 3)
+        
+        # TASK 1: Append single color
         self.sequence.append(new_color)
-
+        
+        # TASK 2: Dynamic acceleration based on score
         self.flash_duration = max(180, 450 - (self.score * 25))
         self.pause_duration = max(80, 200 - (self.score * 10))
         
@@ -56,6 +70,9 @@ class GameEngine:
         self.step_start_time = pygame.time.get_ticks()
         self.is_flashing = True
         self.buttons[self.sequence[0]].is_lit = True
+        
+        # TASK 3: Play sound for the very first step of the round
+        self.tones[self.sequence[0]].play(maxtime=int(self.flash_duration))
 
     def update(self):
         now = pygame.time.get_ticks()
@@ -200,9 +217,8 @@ class GameEngine:
         
         buffer = array.array('h') # Signed 16-bit integer array
         for i in range(frames):
-            # Square wave: high for first half of period, low for second half
             val = amplitude if (i % period) < (period // 2) else -amplitude
-            buffer.append(val) # Left channel
-            buffer.append(val) # Right channel
+            buffer.append(val)
+            buffer.append(val)
             
         return pygame.mixer.Sound(buffer=buffer)
