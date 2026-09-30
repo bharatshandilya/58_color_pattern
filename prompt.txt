@@ -1,0 +1,33 @@
+Task 1
+
+I am a game developer currently working on a Memory Color Pattern game
+The game has:
+1) A 2x2 grid of four colored buttons (Red, Blue, Green, Yellow) with dim and illuminated lighting states
+2) Automated timed playback that flashes the sequence step-by-step for the player to watch
+3) Click detection registering player inputs and checking order against the target sequence
+4) Score tracking, visual turn indicators, and a Game Over overlay with restart functionality
+The game has a bug and three features left as tasks to implement.
+I need you to analyze, and complete/fix the game to make it fully functional and more interesting.
+Task 1: Fix the sequence duplication bug
+Each round is supposed to append only one new random color to the existing sequence. In game_engine.start_next_round(), the sequence update line performs self.sequence += self.sequence + [new_color] instead of appending new_color to self.sequence. This causes the pattern length to grow exponentially and duplicates previous entries. Correct the sequence addition logic so only one single color index is added each round.
+I am attaching all the code files. Finish Task 1 and suggest all the changes required.
+
+Task 2
+
+Task 2: Implement dynamic playback acceleration
+Currently, the sequence flashes at a static 450ms flash duration and 200ms pause duration across all rounds. In game_engine.start_next_round(), adjust self.flash_duration and self.pause_duration to decrease gradually as self.score increases (down to a minimum speed threshold like 180ms flash and 80ms pause), making playback faster and more challenging in later rounds.
+
+Task 3
+
+Task 3: Implement sound effects or audio frequencies
+The game currently relies entirely on silent visual flashes. Use pygame.mixer or synthesize simple square/sine audio tones mapped to each color ID (e.g., Red: 261Hz, Blue: 329Hz, Green: 392Hz, Yellow: 523Hz). Play the respective tone whenever a button flashes during WATCH mode and when the player clicks it during PLAYER_TURN. 
+
+Task 4
+
+Task 4: Implement a round countdown timer
+During PLAYER_TURN, the player can currently wait indefinitely before making their move. Add a per-round or per-step countdown timer bar displayed in the HUD. If the timer reaches 0 before the player completes the required sequence, transition the game state to GAME_OVER.
+
+Debugging
+
+Provide a .gitignore file, ensuring that it excludes Python virtual environments, cache directories, and macOS .DS_Store files.
+Also, the game window is crashing and closing immediately after the completion of the first round. Please analyze the game loop and state transition logic and provide the corrected code.
