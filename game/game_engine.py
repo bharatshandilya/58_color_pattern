@@ -42,9 +42,10 @@ class GameEngine:
 
     def start_next_round(self):
         new_color = random.randint(0, 3)
-
-        # FIXED: Append only the new single color to the sequence
         self.sequence.append(new_color)
+
+        self.flash_duration = max(180, 450 - (self.score * 25))
+        self.pause_duration = max(80, 200 - (self.score * 10))
         
         self.player_input.clear()
         self.state = "WATCH"
